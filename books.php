@@ -33,6 +33,19 @@ $params = [
     ':author' => $pattern
 ];
 
+$subject = filter_input(INPUT_GET, 'subject', FILTER_VALIDATE_INT);
+
+if (is_int($subject) && $subject >= 1) {
+    $sql .= ' AND books.subject_id = :subject';
+    $params[':subject'] = $subject;
+}
+
+if (isset($_GET['available']) && $_GET['available'] === '1') {
+    $sql .= ' AND (books.copies - books.on_loan) > 0';
+}
+
+$sql .= ' ORDER BY books.title';
+
 $stmt = $pdo->prepare($sql);
 
 $stmt->execute($params);
